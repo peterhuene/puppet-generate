@@ -1,0 +1,8 @@
+.ruby-version
+.bundle/
+Gemfile.lock
+Gemfile.local
+.idea/
+.ruby-version
+.ruby-gemset
+puppet-generate-*.gem
