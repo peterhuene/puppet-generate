@@ -34,8 +34,12 @@ module Puppet
             end
             @title_patterns = type.title_patterns.map do |mapping|
               [
-                "/#{mapping[0].source}/",
-                mapping[1].map { |names| names.map { |name| Util::to_puppet_string(name.to_s) } }
+                "/#{mapping[0].source.gsub(/\//, '\/')}/",
+                mapping[1].map { |names|
+                  next if names.empty?
+                  raise Puppet::Error, 'title patterns that use procs are not supported.' if names.size != 1
+                  Util::to_puppet_string(names[0].to_s)
+                }
               ]
             end.to_h
           end

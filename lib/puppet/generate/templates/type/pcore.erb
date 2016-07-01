@@ -34,15 +34,7 @@ Puppet::PCore::Resource.new({
   ],
   title_patterns => {
 <%- title_patterns.each_with_index do |mapping, index| -%>
-    <%= mapping[0] %> => [
-  <%- mapping[1].each do |names| -%>
-      [
-    <%- names.each do |name| -%>
-          <%= name %><%= "," if index + 1 < names.size %>
-    <%- end -%>
-  <%- end -%>
-      ]
-    ]<%= ",\n" if index + 1 < title_patterns.size -%>
-<%- end %>
+    <%= mapping[0] %> => [<%= mapping[1].join(', ')%>]<%= "," if index + 1 < title_patterns.size %>
+<%- end -%>
   }
 })

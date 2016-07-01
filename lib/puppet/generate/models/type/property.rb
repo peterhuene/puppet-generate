@@ -42,7 +42,7 @@ module Puppet
             values = property.value_collection.instance_variable_get('@values') || {}
             values.each do |_, value|
               if value.regex?
-                regexes << "/#{value.name.source}/"
+                regexes << "/#{value.name.source.gsub(/\//, '\/')}/"
                 next
               end
 

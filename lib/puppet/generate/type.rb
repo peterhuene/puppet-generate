@@ -162,16 +162,32 @@ module Puppet
             next
           end
 
+          # Create the model
           begin
-            Puppet.notice "Creating '#{input.output_path}' using #{input.format} format."
             model = Models::Type::Type.new(type)
+          rescue Exception => e
+            # Move on to the next input
+            Puppet.log_exception(e, "#{input}: #{e.message}")
+            next
+          end
+
+          # Render the template
+          begin
+            result = model.render(templates[input.template_path])
+          rescue Exception => e
+            Puppet.log_exception(e)
+            raise
+          end
+
+          # Write the output file
+          begin
+            Puppet.notice "Generating '#{input.output_path}' using '#{input.format}' format."
             FileUtils.mkdir_p(File.dirname(input.output_path))
             File.open(input.output_path, 'w') do |file|
-              file.write(model.render(templates[input.template_path]))
+              file.write(result)
             end
           rescue Exception => e
-            Puppet::FileSystem::unlink(input.output_path)
-            Puppet.log_exception(e, "Failed to generate resource type '#{type_name}' to '#{input.output_path}': #{e.message}")
+            Puppet.log_exception(e, "Failed to generate '#{input.output_path}': #{e.message}")
             # Move on to the next input
             next
           end
